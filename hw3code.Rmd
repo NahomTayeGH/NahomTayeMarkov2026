@@ -1,0 +1,65 @@
+
+
+```{r setup, include=FALSE warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+```
+
+
+```{r question 1d}
+##question 1d
+# 1. Define the densities and constants
+f_target <- function(x) {
+  ifelse(x >= 0, (1/3) * x * (1 + x) * exp(-x), 0)
+}
+
+# Optimal a* calculation
+a_star <- sqrt(3) - 1
+
+# Scaling constant c(a*)
+c_val <- exp(-a_star) / (3 * a_star^2 * (1 - a_star))
+
+# Envelope function: c * g_a(x)
+envelope <- function(x) {
+  # g_a(x) is Gamma(shape=2, rate=a)
+  ifelse(x >= 0, c_val * (a_star^2 * x * exp(-a_star * x)), 0)
+}
+
+# 3. Plottinga
+x_seq <- seq(0, 12, length.out = 1000)
+plot(x_seq, f_target(x_seq), type = "l", col = "blue", lwd = 2,
+     ylim = c(0, 0.35), xlab = "x", ylab = "Density",
+     main = "Optimized Acceptance-Rejection Proposal")
+lines(x_seq, envelope(x_seq), col = "red", lty = 2, lwd = 2)
+
+# Mark the touch point x*(a*)
+x_star <- a_star / (1 - a_star)
+points(x_star, f_target(x_star), col = "darkgreen", pch = 19)
+
+legend("topright", legend = c("Target f(x)", "Envelope c*g(x)", "Touch Point x*"),
+       col = c("blue", "red", "darkgreen"), lty = c(1, 2, NA), pch = c(NA, NA, 19), lwd = 2)
+```
+
+```{r question 2f}
+##question 2f
+states <- c("G", "S", "D")
+P <- matrix(c(9/10, 1/10, 0,
+              0,    7/8,  1/8,
+              2/5,  0,    3/5), 
+            nrow = 3, byrow = TRUE, 
+            dimnames = list(states, states))
+# Simulate the Markov process for 10,000 steps
+set.seed(123) 
+n_steps <- 10000
+chain <- character(n_steps)
+current_state <- "G"
+
+for (i in 1:n_steps) {
+  chain[i] <- current_state
+  current_state <- sample(states, size = 1, prob = P[current_state, ])
+}
+
+fraction_G <- sum(chain == "G") / n_steps
+fraction_G
+```
