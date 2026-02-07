@@ -1,10 +1,3 @@
----
-title: "markov hw 3 code"
-author: "Nahom Taye"
-date: "2026-02-04"
-output: pdf_document
----
-
 ```{r setup, include=FALSE warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
